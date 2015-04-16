@@ -21,9 +21,9 @@ def main():
     signs = []
     with open(args.signs_file) as fp:
         for line in fp:
-            sign, key = line.split(':')
+            key, sign = line.split(':')
             keys.append(key.strip())
-            signs.append(sign)
+            signs.append(sign.strip())
 
     key_to_sign = dict(zip(keys, signs))
 

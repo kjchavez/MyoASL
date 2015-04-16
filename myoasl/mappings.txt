@@ -1,16 +1,16 @@
-pizza: q
-milk: w
-hamburger: e
-hot dog: r
-egg: t
-apple: y
-cheese: u
-drink: i
-spoon: o 
-fork: p
-cup: a
-cereal: s
-water: d
-candy: f
-cookie: g
-hungry: h
+q: pizza
+w: milk
+e: hamburger
+r: hot dog
+t: egg
+y: apple
+u: cheese
+i: drink
+o: spoon 
+p: fork
+a: cup
+s: cereal
+d: water
+f: candy
+g: cookie
+h: hungry
