@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 
 from sklearn.cross_validation import train_test_split
 
+INPUT_DIM = 8 # Defined by Myo API
+
 def load_time_series(filename):
     """Returns a list of numpy arrays and a numpy array of labels. """
     labels = []
@@ -12,7 +14,9 @@ def load_time_series(filename):
         for line in fp:
             label, series = line.split('\t', 1)
             labels.append(int(label))
-            data.append(np.fromstring(series, dtype=np.uint8, sep=','))
+            series = np.fromstring(series, dtype=np.uint8, sep=',')
+            series = series.reshape(-1,INPUT_DIM)
+            data.append(series)
 
     return data, np.array(labels, dtype=int)
 
@@ -32,14 +36,15 @@ def to_fixed_length(data,series_length):
 
     # Note, even though the original data is typically unsigned ints,
     # the resampling may introduce non-integer data points.
-    fixed_length_data = np.empty((len(data), series_length), dtype=float)
+    fixed_length_data = np.empty((len(data), series_length*INPUT_DIM), dtype=float)
     for i, series in enumerate(data):
-        fixed_length_data[i, :] = scipy.signal.resample(series, series_length)
+        fixed_length_series = scipy.signal.resample(series, series_length)
+        fixed_length_data[i, :] = fixed_length_series.ravel()
 
     return fixed_length_data
 
 def create_train_val_splits(filename, series_length=200, test_size=0.3):
-    data, labels = load_time_series('test.txt')
+    data, labels = load_time_series(filename)
 
     X = to_fixed_length(data, series_length)
     y = labels

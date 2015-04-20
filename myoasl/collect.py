@@ -34,11 +34,17 @@ def main():
         if current_key:
             data_stream.append(emg)
 
+    def process_imu(quat, acc, gyro):
+        print "quat", quat
+        print "acc", acc
+        print "gyro", gyro
+        print "-----"
+
     if not args.no_myo:
         myo = MyoRaw(tty=args.tty)
         myo.add_emg_handler(process_emg)
+        myo.add_imu_handler(process_imu)
         myo.connect()
-
 
     # Disable repeat trigger of keypress events
     os.system('xset r off')
@@ -72,6 +78,11 @@ def main():
         times = [0.0]
         process_emg(emg, moving, times)
         root.after(5, random_emg)
+
+    def random_imu():
+        quat = [random.rand]
+        acc = []
+        gyro = []
 
     frame = Frame(root, width=100, height=100)
     frame.bind("<KeyPress>", keydown)
