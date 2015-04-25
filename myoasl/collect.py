@@ -27,18 +27,21 @@ def main():
 
     key_to_sign = dict(zip(keys, signs))
 
-    def process_emg(emg, moving, times=[]):
+    def process_emg(emg, moving, times=[], debug=False):
         """Handler for emg data"""
+        if debug:
+            print 'EMG data'
         global current_key
         global data_stream
         if current_key:
             data_stream.append(emg)
 
-    def process_imu(quat, acc, gyro):
-        print "quat", quat
-        print "acc", acc
-        print "gyro", gyro
-        print "-----"
+    def process_imu(quat, acc, gyro, debug=False):
+        if debug:
+            print "quat", quat
+            print "acc", acc
+            print "gyro", gyro
+            print "-----"
 
     if not args.no_myo:
         myo = MyoRaw(tty=args.tty)
@@ -79,6 +82,12 @@ def main():
         process_emg(emg, moving, times)
         root.after(5, random_emg)
 
+    def myo_iter():
+        """ Simulate Myo device by generating data every 5 milliseconds"""
+        myo.run(1)
+
+        root.after(1, myo_iter)
+
     def random_imu():
         quat = [random.rand]
         acc = []
@@ -92,6 +101,8 @@ def main():
 
     if args.no_myo:
         root.after(1000, random_emg)
+    else:
+        root.after(100, myo_iter)
 
     root.mainloop()
 
