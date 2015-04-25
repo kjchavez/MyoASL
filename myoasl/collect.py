@@ -6,6 +6,14 @@ from Tkinter import *
 
 current_key = None
 data_stream = []
+imu_stream = []
+
+def extract_imu(data):
+    quat = tuple(data[0:4])
+    acc = tuple(data[4:7])
+    gyro = tuple(data[7:])
+
+    return quat, acc, gyro
 
 def main():
     parser = argparse.ArgumentParser()
@@ -37,11 +45,16 @@ def main():
             data_stream.append(emg)
 
     def process_imu(quat, acc, gyro, debug=False):
+        global current_key
+        global imu_stream
         if debug:
             print "quat", quat
             print "acc", acc
             print "gyro", gyro
             print "-----"
+        if current_key:
+            imu_stream.append(list(quat) + list(acc) + list(gyro))
+
 
     if not args.no_myo:
         myo = MyoRaw(tty=args.tty)
@@ -56,17 +69,23 @@ def main():
     def keyup(e):
         global current_key
         global data_stream
+        global imu_stream
+
         print 'end', key_to_sign.get(current_key, "N/A")
         if current_key in keys:
             with open(args.output_file, 'a') as fp:
-                fp.write("%d\t" % keys.index(current_key))
+                fp.write("%d\n" % keys.index(current_key))
                 fp.write(",".join([str(x) for datum in data_stream
+                                   for x in datum]))
+                fp.write("\n")
+                fp.write(",".join([str(x) for datum in imu_stream
                                    for x in datum]))
                 fp.write("\n")
 
         # Reset
         current_key = None
         data_stream = []
+        imu_stream = []
 
     def keydown(e):
         global current_key
