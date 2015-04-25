@@ -5,6 +5,8 @@ import cPickle
 from Tkinter import *
 import pyttsx
 import numpy as np
+import sys
+import os 
 
 from myoasl.ml.preprocess import merge_data
 from myoasl.myo.myo_raw import MyoRaw
@@ -72,7 +74,7 @@ def main():
         classifier = cPickle.load(fp)
 
     # Text-to-speech initialization
-    if args.speak:
+    if args.speak and 'darwin' not in sys.platform:
         engine = pyttsx.init()
 
     emg_handler = EMGHandler()
@@ -96,6 +98,7 @@ def main():
     myo.add_imu_handler(imu_handler)
     myo.connect()
 
+    utterance = ""
     while True:
         myo.vibrate(2)
         start_recording()
@@ -105,9 +108,16 @@ def main():
 
         sign = stop_recording()
         print sign
-        if args.speak:
-            engine.say(sign)
-            engine.runAndWait()
+        if sign != 'random':
+            utterance += sign + " "
+        else:
+            if args.speak:
+                if 'darwin' in sys.platform:
+                    os.system('say -v \'oliver\' "'+utterance.lower()+'" -r 50')
+                else:
+                    engine.say(utterance)
+                    engine.runAndWait()
+            utterance = ""
 
 if __name__ == "__main__":
     main()
