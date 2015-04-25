@@ -1,11 +1,21 @@
 """ Tests full suite of linear models for MyoASL """
+import cPickle
 import sys
+import os
 import numpy as np
 from sklearn.linear_model import *
 from sklearn.svm import *
+import argparse
 
 from myoasl.ml import preprocess
 
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s", "--save-directory", dest="save_directory",
+        default="classifiers/")
+    parser.add_argument("-d", "--data", required=True)
+
+    return parser.parse_args()
 
 def evaluate(model, test_set, true_labels, dest=sys.stdout):
     """ Runs various evaluation metrics on a model."""
@@ -16,6 +26,9 @@ def evaluate(model, test_set, true_labels, dest=sys.stdout):
     print >> dest, "Accuracy:", accuracy
     return accuracy
 
+def save_classifier(model, name):
+    with open(name, 'w') as fp:
+        cPickle.dump(model, fp)
 
 def test_model(model, X_train, X_val, y_train, y_val,
                logfile='log.linear-models.txt'):
@@ -25,27 +38,33 @@ def test_model(model, X_train, X_val, y_train, y_val,
         evaluate(model, X_val, y_val, dest=fp)
 
 
-def test_all(data_filename):
+def test_all(data_filename, save_directory):
     """ Create and evaluate various linear models. """
     data = preprocess.create_train_val_splits(data_filename)
 
-    models = [
-        LogisticRegression(multi_class='multinomial', solver='lbfgs', C=1.0),
-        LogisticRegression(multi_class='ovr', solver='lbfgs', C=1.0),
-        LinearSVC(penalty='l2', loss='squared_hinge', dual=True, tol=0.0001,
+    models = {
+        'log-reg-multinomial': LogisticRegression(multi_class='multinomial', solver='lbfgs', C=1.0),
+        'log-reg-ovr': LogisticRegression(multi_class='ovr', solver='lbfgs', C=1.0),
+        'linear-svc': LinearSVC(penalty='l2', loss='squared_hinge', dual=True, tol=0.0001,
                   C=1.0, multi_class='ovr', fit_intercept=True,
                   intercept_scaling=1, class_weight=None, verbose=0,
                   random_state=None, max_iter=1000)
 
-    ]
+    }
 
-    for model in models:
-        test_model(model, *data)
+    for model_name in models:
+        test_model(models[model_name], *data)
+
+    if not os.path.isdir(save_directory):
+        os.makedirs(save_directory)
+
+    for model_name in models:
+        save_classifier(models[model_name], os.path.join(save_directory, model_name + '.mdl'))
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print "Please specify data filename."
         sys.exit(1)
 
-    data_filename = sys.argv[1]
-    test_all(data_filename)
+    args = get_args()
+    test_all(args.data, args.save_directory)
