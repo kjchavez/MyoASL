@@ -16,14 +16,14 @@ def load_time_series(filename):
 
     with open(filename) as fp:
         for line in fp:
-            label, emg, imu = line.split('\t',2)
+            label, emg, imu = line.split('\t', 2)
             labels.append(int(label))
             emg = np.fromstring(emg, dtype=np.uint8, sep=',')
-            emg = emg.reshape(-1,INPUT_DIM)
+            emg = emg.reshape(-1, INPUT_DIM)
             data.append(emg)
             
             imu = np.fromstring(imu, dtype=int, sep=',')
-            imu = imu.reshape(-1,IMU_DIM)
+            imu = imu.reshape(-1, IMU_DIM)
             imu_data.append(imu)
 
     return data, imu_data, np.array(labels, dtype=int)
