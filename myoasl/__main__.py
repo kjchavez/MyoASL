@@ -97,15 +97,13 @@ def main():
     myo.connect()
 
     while True:
-        print "Do next sign!"
         myo.vibrate(2)
         start_recording()
         start_time = time.time()
-        while time.time() - start_time < args.sign_length:
+        while (time.time() - start_time) < args.sign_length:
             myo.run()
 
         sign = stop_recording()
-        print "Done with sign"
         print sign
         if args.speak:
             engine.say(sign)
