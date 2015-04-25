@@ -74,10 +74,10 @@ def main():
         print 'end', key_to_sign.get(current_key, "N/A")
         if current_key in keys:
             with open(args.output_file, 'a') as fp:
-                fp.write("%d\n" % keys.index(current_key))
+                fp.write("%d\t" % keys.index(current_key))
                 fp.write(",".join([str(x) for datum in data_stream
                                    for x in datum]))
-                fp.write("\n")
+                fp.write("\t")
                 fp.write(",".join([str(x) for datum in imu_stream
                                    for x in datum]))
                 fp.write("\n")
