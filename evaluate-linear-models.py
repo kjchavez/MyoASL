@@ -61,10 +61,9 @@ def test_all(data_filename, save_directory):
     for model_name in models:
         save_classifier(models[model_name], os.path.join(save_directory, model_name + '.mdl'))
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print "Please specify data filename."
-        sys.exit(1)
-
+def main():
     args = get_args()
     test_all(args.data, args.save_directory)
+
+if __name__ == "__main__":
+    main()
