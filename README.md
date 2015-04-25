@@ -1,6 +1,7 @@
 # Reading List
 - [Connectionist Temporal Classification](http://www.machinelearning.org/proceedings/icml2006/047_Connectionist_Tempor.pdf)
 - [Deep Speech](http://arxiv.org/pdf/1412.5567v2.pdf)
+- [Reddit Rant](http://www.reddit.com/r/gadgets/comments/2m6anu/review_thalmic_labs_myo_armband_tldr_dont_buy/)
 
 # Usage
 ## Collecting Data
