@@ -18,7 +18,7 @@ def extract_imu(data):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("output_file")
-    parser.add_argument("--signs_file", default="myoasl/mappings.txt")
+    parser.add_argument("--signs_file", default="mappings.txt")
     parser.add_argument("--tty", type=int, default=None)
     parser.add_argument("--no-myo", dest="no_myo", action="store_true")
 
