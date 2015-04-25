@@ -29,7 +29,7 @@ def load_time_series(filename):
     return data, imu_data, np.array(labels, dtype=int)
 
 
-def to_fixed_length(data,series_length, dimension):
+def to_fixed_length(data, series_length, dimension):
     """Converts list of arbitrary length np arrays to 2D array of fixed length.
 
     Args:
@@ -50,6 +50,19 @@ def to_fixed_length(data,series_length, dimension):
         fixed_length_data[i, :] = fixed_length_series.ravel()
 
     return fixed_length_data
+
+def merge_data(emg_data, imu_data, series_length=200):
+    emg_data = to_fixed_length(emg_data, series_length, INPUT_DIM)
+    imu_data = to_fixed_length(imu_data, series_length, IMU_DIM)
+
+    # n x datapoint x datapoint_dim
+    emg_data = emg_data.reshape((emg_data.shape[0], -1, INPUT_DIM))
+    imu_data = imu_data.reshape((imu_data.shape[0], -1, IMU_DIM))
+
+    X = np.concatenate((emg_data, imu_data), axis=2)
+    X = X.reshape(emg_data.shape[0], -1)
+
+    return X
 
 def create_train_val_splits(filename, series_length=200, test_size=0.3):
     emg_data, imu_data, labels = load_time_series(filename)
