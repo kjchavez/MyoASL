@@ -33,7 +33,7 @@ def to_fixed_length(data, series_length, dimension):
     """Converts list of arbitrary length np arrays to 2D array of fixed length.
 
     Args:
-        data: list of array-like objects of arbitrary length
+        data: list of 2D array-like objects of arbitrary length
         series_length: desired length for all arrays in data
 
     Returns:
