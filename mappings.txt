@@ -1,0 +1,4 @@
+r: random
+i: I
+w: want
+p: pizza
