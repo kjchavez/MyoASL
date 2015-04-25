@@ -1,10 +1,13 @@
 # Run application
+import time
 import argparse
 import cPickle
 from Tkinter import *
 import pyttsx
+import numpy as np
 
 from myoasl.ml.preprocess import merge_data
+from myoasl.myo.myo_raw import MyoRaw
 
 class EMGHandler(object):
     def __init__(self):
@@ -14,7 +17,7 @@ class EMGHandler(object):
 
     def __call__(self, emg, moving, times=[]):
         if self.is_recording:
-            self.data_stream.append(emg)
+            self.data.append(emg)
 
     def start(self):
         self.is_recording = True
@@ -80,8 +83,8 @@ def main():
         imu_handler.start()
 
     def stop_recording():
-        emg_data = emg_handler.stop()
-        imu_data = imu_handler.stop()
+        emg_data = [emg_handler.stop()]
+        imu_data = [imu_handler.stop()]
 
         X = merge_data(emg_data, imu_data)
         label = classifier.predict(X)
@@ -94,10 +97,15 @@ def main():
     myo.connect()
 
     while True:
+        print "Do next sign!"
         myo.vibrate(2)
         start_recording()
-        myo.run(args.sign_length)
+        start_time = time.time()
+        while time.time() - start_time < args.sign_length:
+            myo.run()
+
         sign = stop_recording()
+        print "Done with sign"
         print sign
         if args.speak:
             engine.say(sign)
