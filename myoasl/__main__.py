@@ -100,7 +100,7 @@ def main():
 
     utterances = [' ']
     while True:
-        myo.vibrate(2)
+        myo.vibrate(1)
         start_recording()
         start_time = time.time()
         while (time.time() - start_time) < args.sign_length:
