@@ -57,7 +57,7 @@ def merge_data(emg_data, imu_data, series_length=200):
 
     # n x datapoint x datapoint_dim
     emg_data = emg_data.reshape((emg_data.shape[0], -1, INPUT_DIM))
-    imu_data = imu_data.reshape((imu_data.shape[0], -1, IMU_DIM))[:,:,0:4]
+    imu_data = imu_data.reshape((imu_data.shape[0], -1, IMU_DIM))[:,:,0:4] / 100.0
 
     X = np.concatenate((emg_data, imu_data), axis=2)
     X = X.reshape(emg_data.shape[0], -1)
