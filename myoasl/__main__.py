@@ -100,6 +100,10 @@ def main():
 
     utterances = [' ']
     while True:
+        print 'Prepare for the motion'
+        time.sleep(1)
+        print 'Make the motion'
+
         myo.vibrate(1)
         start_recording()
         start_time = time.time()
