@@ -40,7 +40,7 @@ def test_model(model, X_train, X_val, y_train, y_val,
 
 def test_all(data_filename, save_directory):
     """ Create and evaluate various linear models. """
-    data = preprocess.create_train_val_splits(data_filename)
+    data = preprocess.create_train_val_splits(data_filename, series_length=50)
 
     models = {
         'log-reg-multinomial': LogisticRegression(multi_class='multinomial', solver='lbfgs', C=1.0),

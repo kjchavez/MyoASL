@@ -88,7 +88,7 @@ def main():
         emg_data = [emg_handler.stop()]
         imu_data = [imu_handler.stop()]
 
-        X = merge_data(emg_data, imu_data)
+        X = merge_data(emg_data, imu_data, series_length=50)
         label = classifier.predict(X)
         return signs[label]
 
@@ -98,7 +98,7 @@ def main():
     myo.add_imu_handler(imu_handler)
     myo.connect()
 
-    utterance = ""
+    utterances = [' ']
     while True:
         myo.vibrate(2)
         start_recording()
@@ -109,15 +109,16 @@ def main():
         sign = stop_recording()
         print sign
         if sign != 'random':
-            utterance += sign + " "
+            if utterances[-1] != sign:
+                utterances.append(sign)
         else:
-            if args.speak:
+            if args.speak :
                 if 'darwin' in sys.platform:
-                    os.system('say -v \'oliver\' "'+utterance.lower()+'" -r 50')
+                    os.system('say -v \'oliver\' "'+' '.join(utterances).lower()+'" -r 50')
                 else:
-                    engine.say(utterance)
+                    engine.say(' '.join(utterances))
                     engine.runAndWait()
-            utterance = ""
+            utterances = [' ']
 
 if __name__ == "__main__":
     main()
