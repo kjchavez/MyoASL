@@ -57,7 +57,7 @@ def merge_data(emg_data, imu_data, series_length=200):
 
     # n x datapoint x datapoint_dim
     emg_data = emg_data.reshape((emg_data.shape[0], -1, INPUT_DIM))
-    imu_data = imu_data.reshape((imu_data.shape[0], -1, IMU_DIM))
+    imu_data = imu_data.reshape((imu_data.shape[0], -1, IMU_DIM))[:,:,0:4]
 
     X = np.concatenate((emg_data, imu_data), axis=2)
     X = X.reshape(emg_data.shape[0], -1)
@@ -67,15 +67,7 @@ def merge_data(emg_data, imu_data, series_length=200):
 def create_train_val_splits(filename, series_length=200, test_size=0.3):
     emg_data, imu_data, labels = load_time_series(filename)
 
-    emg_data = to_fixed_length(emg_data, series_length, INPUT_DIM)
-    imu_data = to_fixed_length(imu_data, series_length, IMU_DIM)
-
-    # n x datapoint x datapoint_dim
-    emg_data = emg_data.reshape((emg_data.shape[0], -1, INPUT_DIM))
-    imu_data = imu_data.reshape((imu_data.shape[0], -1, IMU_DIM))
-
-    X = np.concatenate((emg_data, imu_data), axis=2)
-    X = X.reshape(emg_data.shape[0], -1)
+    X = merge_data(emg_data, imu_data, series_length=series_length)
     y = labels
 
     # Split into training and validation set
@@ -106,7 +98,9 @@ def test():
     plt.show()
 
 def test_data_reading():
-    create_train_val_splits(sys.argv[1])
+    x_train, x_val, y_train, y_val = create_train_val_splits(sys.argv[1])
+    print np.bincount(y_train)
+    print np.bincount(y_val)
 
 if __name__ == "__main__":
     test_data_reading()
