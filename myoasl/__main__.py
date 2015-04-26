@@ -108,7 +108,9 @@ def main():
 
         sign = stop_recording()
         print sign
-        if sign != 'random':
+        if sign == 'random':
+            continue
+        if sign != 'stop':
             if utterances[-1] != sign:
                 utterances.append(sign)
         else:
